@@ -1,0 +1,319 @@
+% vim: set spell spelllang=en tw=100 et sw=4 sts=4 :
+
+\documentclass[a0paper]{tikzposter}
+
+\usepackage{complexity}
+\usepackage{wrapfig}
+\usepackage{microtype}
+\usepackage{gnuplot-lua-tikz}
+
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
+
+\title{Solving Hard Graph Problems in Parallel}
+\author{Ciaran McCreesh and Patrick Prosser}
+\institute{University of Glasgow, Glasgow, Scotland}
+\titlegraphic{\includegraphics[keepaspectratio=true,scale=2.5]{UoG_keyline.pdf}}
+
+\settitle{
+    \begin{tikzpicture}
+        \node (T) [inner sep=0pt] {\begin{minipage}{\linewidth}
+                \color{titlefgcolor}
+                {\bfseries \Huge \hspace{10mm}\@title \par}
+                \vspace*{1em}
+                {\Large {\bfseries \hspace{10mm}\@author}, \@institute}
+        \end{minipage}};
+
+        \node at (T.east) [anchor=center, inner sep=0pt, xshift=-8cm] {\@titlegraphic};
+    \end{tikzpicture}
+}
+
+% University of Glasgow standard colours
+\definecolor{uofguniversityblue}{rgb}{0, 0.219608, 0.396078}
+
+\definecolor{uofgheather}{rgb}{0.356863, 0.32549, 0.490196}
+\definecolor{uofgaquamarine}{rgb}{0.603922, 0.72549, 0.678431}
+\definecolor{uofgslate}{rgb}{0.309804, 0.34902, 0.380392}
+\definecolor{uofgrose}{rgb}{0.823529, 0.470588, 0.709804}
+\definecolor{uofgmocha}{rgb}{0.709804, 0.564706, 0.47451}
+
+\definecolor{uofglawn}{rgb}{0.517647, 0.741176, 0}
+\definecolor{uofgcobalt}{rgb}{0, 0.615686, 0.92549}
+\definecolor{uofgturquoise}{rgb}{0, 0.709804, 0.819608}
+\definecolor{uofgsunshine}{rgb}{1.0, 0.862745, 0.211765}
+\definecolor{uofgpumpkin}{rgb}{1.0, 0.72549, 0.282353}
+\definecolor{uofgthistle}{rgb}{0.584314, 0.070588, 0.447059}
+\definecolor{uofgpillarbox}{rgb}{0.701961, 0.047059, 0}
+\definecolor{uofglavendar}{rgb}{0.356863, 0.301961, 0.580392}
+
+\definecolor{uofgsandstone}{rgb}{0.321569, 0.278431, 0.231373}
+\definecolor{uofgforest}{rgb}{0, 0.317647, 0.2}
+\definecolor{uofgburgundy}{rgb}{0.490196, 0.133333, 0.223529}
+\definecolor{uofgrust}{rgb}{0.603922, 0.227451, 0.023529}
+
+\definecolorstyle{UofG}{
+}{
+    % Background Colors
+    \colorlet{backgroundcolor}{uofgsandstone}
+    \colorlet{framecolor}{black}
+    % Title Colors
+    \colorlet{titlefgcolor}{white}
+    \colorlet{titlebgcolor}{uofguniversityblue}
+    % Block Colors
+    \colorlet{blocktitlebgcolor}{white}
+    \colorlet{blocktitlefgcolor}{uofguniversityblue}
+    \colorlet{blockbodybgcolor}{white}
+    \colorlet{blockbodyfgcolor}{black}
+    % Innerblock Colors
+    \colorlet{innerblocktitlebgcolor}{uofguniversityblue}
+    \colorlet{innerblocktitlefgcolor}{black}
+    \colorlet{innerblockbodybgcolor}{uofgsandstone}
+    \colorlet{innerblockbodyfgcolor}{black}
+    % Note colors
+    \colorlet{notefgcolor}{black}
+    \colorlet{notebgcolor}{uofgrust}
+    \colorlet{noteframecolor}{red}
+}
+
+\usetheme{Autumn}
+\usecolorstyle{UofG}
+
+\tikzposterlatexaffectionproofoff
+
+\useblockstyle[bodyverticalshift=-1cm, roundedcorners=1]{Default}
+
+\renewcommand{\Huge}{\fontsize{77.2}{96}\selectfont}
+
+% Styles for drawings
+
+\tikzset{edge/.style={line width=3pt, color=uofgsandstone}}
+\tikzset{ledge/.style={line width=3pt, color=uofgsandstone!40!white}}
+
+\begin{document}
+\maketitle
+
+{
+    \colorlet{blockbodybgcolor}{uofgpumpkin}
+    \colorlet{blocktitlebgcolor}{uofgpumpkin}
+    \block[bodyverticalshift=0cm, bodyinnersep=3mm]{}{
+        \centering\begin{minipage}{0.94\textwidth}
+            \textbf{Combinatorics} is a branch of mathematics devoted to counting and colouring
+            things in while respecting certain rules, and \textbf{Combinatorial Optimisation} is
+            about finding the ``best'' way to do this. Some important real-world problems can be
+            expressed as combinatorial optimisation problems, which makes them easier to model and
+            solve using computers. Our research investigates how we can \textbf{exploit parallelism}
+            present in today's multi-core processors to speed up the solving process, or to allow us
+            to tackle larger or more complicated problems in the time we have.
+        \end{minipage}
+    }
+}
+
+\begin{columns}
+\column{0.5}
+
+\block{Minimising Resource Usage, with Constraints}{
+\begin{wrapfigure}[8]{r}{0.38\linewidth}
+    \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
+        \newcount \c
+        \foreach \n in {1, ..., 9}{
+            \c=\n
+            \multiply\c by -40
+            \advance\c by 130
+
+            \ifthenelse{\n = 1 \OR \n = 2 \OR \n = 4 \OR \n = 7}{
+                \node [draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+            }{
+                \ifthenelse{\n = 3 \OR \n = 5 \OR \n = 4 \OR \n = 7 \OR \n = 9}{
+                    \node [draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+                }{
+                    \ifthenelse{\n = 6}{
+                        \node [draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+                    }{
+                        \node [draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+                    }
+                }
+            }
+        }
+
+        \draw [ledge] (N1) -- (N5); \draw [ledge] (N1) -- (N9);
+        \draw [ledge] (N2) -- (N5); \draw [ledge] (N2) -- (N6); \draw [ledge] (N2) -- (N8);
+        \draw [ledge] (N3) -- (N4); \draw [ledge] (N3) -- (N7);
+        \draw [ledge] (N4) -- (N8);
+        \draw [ledge] (N5) -- (N6);
+        \draw [ledge] (N7) -- (N8);
+        \draw [ledge] (N8) -- (N9);
+
+        \draw [ledge] (N1) -- (N3);
+        \draw [ledge] (N6) -- (N8);
+        \draw [ledge] (N1) -- (N6);
+        \draw [ledge] (N1) -- (N8);
+        \draw [ledge] (N3) -- (N6);
+        \draw [ledge] (N3) -- (N8);
+    \end{tikzpicture}\end{center}
+\end{wrapfigure}
+
+Suppose we need to \textbf{schedule a day's meetings}. If a person needs to attend both meeting 3
+and meeting 6, then these two meetings cannot be held at the same time. We can model this as a graph
+problem: we draw a circle for each meeting, and put a line between two circles if these two meetings
+must occur at different times. We then want to colour in these circles, giving adjacent circles
+different colours, and using as few colours as possible. By treating different colours as different
+time slots, colouring in the graph gives us an optimal meeting schedule.
+
+\medskip
+
+We can handle richer constraints: we might have a limit on how many circles any colour can be used
+in (if we only have a \textbf{limited number of meeting rooms}), or we might want each colour to be
+used on the same number of circles (for a \textbf{balanced workload}).
+
+\medskip
+
+More generally, graph colouring tells us how to use \textbf{as few resources as possible},
+respecting conflicts. Industrial uses include call centre staff allocation, scheduling jobs on
+machinery, radio bandwidth allocation, and reducing the impact of vehicle maintenance.
+}
+
+\block{Finding Large, Interconnected Groups of People}{
+\begin{wrapfigure}[8]{r}{0.38\linewidth}
+    \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
+        \newcount \c
+        \foreach \n in {1, ..., 8}{
+            \c=\n \advance\c by -1 \multiply\c by -360 \divide\c by 8 \advance\c by 112.5
+            \ifthenelse{\n = 1 \OR \n = 3 \OR \n = 6 \OR \n = 7}{
+                \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+            }{
+                \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+            }
+        }
+
+        \draw [ledge] (N1) -- (N2);
+        \draw [ledge] (N1) -- (N5);
+        \draw [ledge] (N2) -- (N3);
+        \draw [ledge] (N2) -- (N8);
+        \draw [ledge] (N3) -- (N4);
+        \draw [ledge] (N3) -- (N5);
+        \draw [ledge] (N3) -- (N8);
+        \draw [ledge] (N4) -- (N5);
+        \draw [ledge] (N4) -- (N6);
+        \draw [ledge] (N5) -- (N8);
+        \draw [ledge] (N7) -- (N8);
+
+        \draw [edge] (N1) -- (N3);
+        \draw [edge] (N1) -- (N6);
+        \draw [edge] (N1) -- (N7);
+        \draw [edge] (N3) -- (N6);
+        \draw [edge] (N3) -- (N7);
+        \draw [edge] (N6) -- (N7);
+    \end{tikzpicture}\end{center}
+\end{wrapfigure}
+
+    A \textbf{clique} can be thought of as a group of people, where everyone in the group knows
+    everyone else in the group.  Finding cliques lets us select \textbf{as much of a resource as
+    possible}, respecting compatibility rules. Clique-finding algorithms have been used to improve
+    the reliability of communications and networking protocols, for
+    verifying electronic circuits, for social media analysis, for targeted advertising, and for controlling flying robots.
+}
+
+\block{Picking Out Interesting Patterns in Graphs}{
+\begin{wrapfigure}[6]{r}{0.38\linewidth}
+    \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
+        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Na) at (1,  0) {1};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nb) at (1, -2) {2};
+        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (Nc) at (0, -4) {3};
+        \node[draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (Nd) at (2, -4) {4};
+
+        \draw [edge] (Na) -- (Nb);
+        \draw [edge] (Nb) -- (Nc);
+        \draw [edge] (Nc) -- (Nd);
+        \draw [edge] (Nb) -- (Nd);
+
+        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N1) at (5.5,  0) {1};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N2) at (7.5,  0) {2};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N3) at (5.5, -2) {3};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N4) at (7.5, -2) {4};
+        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (N5) at (5.5, -4) {5};
+        \node[draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (N6) at (7.5, -4) {6};
+
+        \draw [ledge] (N1) -- (N2);
+        \draw [edge] (N1) -- (N3);
+        \draw [ledge] (N1) -- (N4);
+        \draw [ledge] (N2) -- (N4);
+        \draw [edge] (N3) -- (N5);
+        \draw [edge] (N3) -- (N6);
+        \draw [ledge] (N4) -- (N6);
+        \draw [edge] (N5) -- (N6);
+        \draw [ledge] (N2) to [in=45, out=315] (N6);
+
+    \end{tikzpicture}\end{center}
+\end{wrapfigure}
+
+    Many real-world phenomena, such as social networks, transport routes, financial transactions,
+    and chemical molecules, can be described using graphs. We may wish to \textbf{find interesting
+    structures} inside these graphs. The subgraph isomorphism problem is to find a small ``pattern''
+    graph in a big ``target'' graph. This is useful in drug design, in fraud detection, and in fault
+    diagnosis.
+
+    \medskip
+
+    We can also \textbf{compare two graphs}. We do this via the maximum common subgraph problem,
+    which is to find the largest subgraph common to two bigger graphs. This is useful in computer
+    vision, database searches, and biochemistry.
+}
+
+\column{0.5}
+
+\block{Backtracking Combinatorial Search}{
+}
+
+\block{Intelligent Backtracking}{
+}
+
+\end{columns}
+
+\block{Research Area: Practical Techniques for Solving Hard Problems in Parallel}{
+\begin{wrapfigure}[15]{r}{0.38\linewidth}
+    \begin{center}\begin{tikzpicture}
+        \input{gen-graph-speedup}
+    \end{tikzpicture}\end{center}
+\end{wrapfigure}
+
+    Combinatorial optimization is, in general, a \textbf{hard problem} (like the famous
+    \textbf{travelling salesman problem}): every additional variable we add in can double the
+    difficulty of finding a solution, so the time taken to solve a problem grows exponentially. In
+    practice we can usually avoid this worst case by combining strong inference, symmetry breaking,
+    carefully selected heuristics, and intelligent search, while learning from failure.  However,
+    solving these problems can still take longer than we would like.
+
+    \medskip
+
+    Modern processors have at least two, and sometimes as many as fifteen, processing cores. We
+    might hope that we could use these cores to make our programs \textbf{run faster}, or at least
+    to \textbf{solve larger or harder problems} in the time we have.
+
+    \medskip
+
+    In general, we may do this by splitting problems up into evenly sized, independent pieces of work,
+    which may be evaluated in parallel. However, combinatorial optimisation
+    problems tend to be \textbf{highly irregular} (cannot be split into evenly sized pieces) and
+    require \textbf{speculative parallelism} (the pieces have dependencies upon each other, and we
+    must guess what the answer might be allow parallel evaluation).
+
+    \medskip
+
+    Despite this, results can be favourable. Our approach uses parallelism to explicitly
+    \textbf{introduce diversity} into a search process to offset the weakest choices made by
+    heuristics, so our parallel workers are reducing our commitment to potentially costly early
+    mistakes. This is combined with late rebalancing, to give good work balance with low overheads
+    and good scalability.
+}
+
+{
+    \colorlet{blockbodybgcolor}{uofgsandstone}
+    \colorlet{blocktitlebgcolor}{uofgsandstone}
+    \block[bodyverticalshift=-0.5cm]{}{
+        \texttt{c.mccreesh.1@research.gla.ac.uk}
+    }
+}
+
+\end{document}
+
