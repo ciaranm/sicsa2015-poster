@@ -98,13 +98,11 @@
     \colorlet{blocktitlebgcolor}{uofgpumpkin}
     \block[bodyverticalshift=0cm, bodyinnersep=3mm]{}{
         \centering\begin{minipage}{0.94\textwidth}
-            \textbf{Combinatorics} is a branch of mathematics devoted to counting and colouring
-            things in while respecting certain rules, and \textbf{Combinatorial Optimisation} is
-            about finding the ``best'' way to do this. Some important real-world problems can be
-            expressed as combinatorial optimisation problems, which makes them easier to model and
-            solve using computers. Our research investigates how we can \textbf{exploit parallelism}
-            present in today's multi-core processors to speed up the solving process, or to allow us
-            to tackle larger or more complicated problems in the time we have.
+            \textbf{Graphs} allows us to model complex and dynamic relationships, and can be used to
+            represent industrial \textbf{optimisation} and \textbf{scheduling} problems.  Our
+            research investigates how we can \textbf{exploit parallelism} present in today's
+            multi-core processors to speed up solving \NP-hard graph problems, or to allow us to
+            tackle larger or more complicated problems in the time we have.
         \end{minipage}
     }
 }
@@ -112,7 +110,7 @@
 \begin{columns}
 \column{0.5}
 
-\block{Minimising Resource Usage, with Constraints}{
+\block{Graph Colouring (Minimising Resource Usage)}{
 \begin{wrapfigure}[8]{r}{0.38\linewidth}
     \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
         \newcount \c
@@ -173,7 +171,7 @@ respecting conflicts. Industrial uses include call centre staff allocation, sche
 machinery, radio bandwidth allocation, and reducing the impact of vehicle maintenance.
 }
 
-\block{Finding Large, Interconnected Groups of People}{
+\block{Clique (Finding Groups of Mutual Friends)}{
 \begin{wrapfigure}[8]{r}{0.38\linewidth}
     \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
         \newcount \c
@@ -214,7 +212,7 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
     verifying electronic circuits, for social media analysis, for targeted advertising, and for controlling flying robots.
 }
 
-\block{Picking Out Interesting Patterns in Graphs}{
+\block{Subgraph Isomorphism (Finding Patterns)}{
 \begin{wrapfigure}[6]{r}{0.38\linewidth}
     \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
         \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Na) at (1,  0) {1};
@@ -262,10 +260,290 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
 \column{0.5}
 
-\block{Backtracking Combinatorial Search}{
+\block{Backtracking and Backjumping Search as a Tree}{
+    Practical algorithms for these problems combine inference (like you do when crossing out numbers
+    when solving a Sudoku) and backtracking search (when we have to guess).  We may view the
+    recursive calls made by a backtracking search algorithm as forming a tree:
+
+    \vspace{0.5cm}
+    \begin{center}
+    \begin{tikzpicture}[scale=2.5]%{{{
+        \coordinate (R);
+
+        \coordinate (N) at (R);
+
+        \coordinate (N1) at ($(N) + (-4, -0.75)$);
+        \coordinate (N2) at ($(N) + ( 0, -0.75)$);
+        \coordinate (N3) at ($(N) + ( 4, -0.75)$);
+
+        \foreach \na in {1, ..., 3}{
+            \coordinate (N\na 1) at ($(N\na) + (-1.25, -1)$);
+            \coordinate (N\na 2) at ($(N\na) + ( 0,    -1)$);
+            \coordinate (N\na 3) at ($(N\na) + ( 1.25, -1)$);
+
+            \foreach \nb in {1, ..., 3}{
+                \coordinate (N\na\nb t1) at ($(N\na\nb) + (-0.5, -1)$);
+                \coordinate (N\na\nb t2) at ($(N\na\nb) + ( 0.5, -1)$);
+
+                \coordinate (N\na\nb s1) at ($(N\na\nb) + (-0.3, -0.6)$);
+                \coordinate (N\na\nb s2) at ($(N\na\nb) + ( 0.3, -0.6)$);
+
+                \coordinate (N\na\nb h1) at ($(N\na\nb) + (-1.5, -3)$);
+                \coordinate (N\na\nb h2) at ($(N\na\nb) + ( 1.5, -3)$);
+            }
+        }
+
+        \foreach \na in {1, ..., 3}{
+            \draw (N) -- (N\na);
+            \foreach \nb in {1, ..., 3}{
+                \draw (N\na) -- (N\na\nb);
+            }
+        }
+
+        \tikzstyle{tf} = [draw, fill, fill=uofgcobalt, rounded corners];
+        \tikzstyle{ts} = [draw, fill, fill=white, rounded corners];
+        \foreach \na in {1, ..., 3}{
+            \foreach \nb in {1, ..., 3}{
+                \ifthenelse{\na = 1}{
+                    \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                }{}
+
+                \ifthenelse{\na = 2}{
+                    \ifthenelse{\na\nb = 21}{
+                        \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                    }{}
+                    \ifthenelse{\na\nb = 22}{
+                        \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                    }{}
+                    \ifthenelse{\na\nb = 23}{
+                        \draw [ts] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                    }{}
+                }{}
+
+                \ifthenelse{\na = 3}{
+                    \draw [ts] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                }{}
+            }
+        }
+
+        \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
+        \tikzstyle{cf} = [draw, circle, fill, fill=uofgcobalt];
+        \tikzstyle{cx} = [draw, forbidden sign, fill, fill=uofgcobalt];
+        \tikzstyle{cs} = [draw, forbidden sign, fill, fill=white];
+        \tikzstyle{cfs} = [draw, circle, fill, fill=white];
+        \node [cx] at (N) { };
+
+        \foreach \na in {1, ..., 3}{
+            \ifthenelse{\na = 1}{
+                \node [cx] at (N\na) { };
+            }{}
+            \ifthenelse{\na = 2}{
+                \node [cf] at (N\na) { };
+                \node [font=\scriptsize] at (N2) { $\uparrow$ };
+            }{}
+            \ifthenelse{\na = 3}{
+                \node [cs] at (N\na) { };
+            }{}
+
+            \foreach \nb in {1, ..., 3}{
+                \ifthenelse{\na = 1}{
+                    \node [cx] at (N\na\nb) { };
+                }{}
+
+                \ifthenelse{\na = 2}{
+                    \ifthenelse{\na\nb = 21}{
+                        \node [cx] at (N\na\nb) { };
+                    }{}
+                    \ifthenelse{\na\nb = 22}{
+                        \node [cf] at (N\na\nb) { };
+                        \node [font=\scriptsize] at (N22) { $\uparrow$ };
+                    }{}
+                    \ifthenelse{\na\nb = 23}{
+                        \node [cs] at (N\na\nb) { };
+                    }{}
+                }{}
+
+                \ifthenelse{\na = 3}{
+                    \ifthenelse{\na\nb = 31}{
+                        \node [cfs] at (N\na\nb) { };
+                        \node [font=\scriptsize] at (N31) { $\uparrow$ };
+                    }{
+                        \node [cs] at (N\na\nb) { };
+                    }
+                }{}
+            }
+        }
+    \end{tikzpicture}%}}}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    A backtracking search algorithm is like a depth-first search over such a tree.  When a failure
+    is encountered, we could just backtrack. \textbf{Backjumping} is a technique which sometimes
+    allows us to backtrack several steps immediately. We show this as a $\uparrow$ symbol. This
+    allows us to eliminate some subproblems based upon information discovered during search. This
+    also happens in branch-and-bound algorithms for optimisation problems, where we dynamically
+    eliminate subtrees which cannot beat the best solution found so far.
 }
 
-\block{Intelligent Backtracking}{
+\block{Parallel Search: Work-Splitting Matters}{
+    Viewing recursive calls as a tree, we can \textbf{evaluate sub-trees in parallel}. However,
+    static decomposition leads to \textbf{poor work balance}, because we do not know up-front how
+    large each subtree is.
+
+    \vspace{1cm}
+
+    \begin{center}
+    \begin{tikzpicture}[scale=2.5]%{{{
+        \coordinate (R);
+
+        \coordinate (N) at (R);
+
+        \coordinate (N1) at ($(N) + (-4, -0.75)$);
+        \coordinate (N2) at ($(N) + ( 0, -0.75)$);
+        \coordinate (N3) at ($(N) + ( 4, -0.75)$);
+
+        \foreach \na in {1, ..., 3}{
+            \coordinate (N\na 1) at ($(N\na) + (-1.25, -1)$);
+            \coordinate (N\na 2) at ($(N\na) + ( 0,    -1)$);
+            \coordinate (N\na 3) at ($(N\na) + ( 1.25, -1)$);
+
+            \foreach \nb in {1, ..., 3}{
+                \coordinate (N\na\nb t1) at ($(N\na\nb) + (-0.45, -1)$);
+                \coordinate (N\na\nb t2) at ($(N\na\nb) + ( 0.45, -1)$);
+
+                \coordinate (N\na\nb s1) at ($(N\na\nb) + (-0.25, -0.5)$);
+                \coordinate (N\na\nb s2) at ($(N\na\nb) + ( 0.25, -0.5)$);
+
+                \coordinate (N\na\nb h1) at ($(N\na\nb) + (-0.5, -1.4)$);
+                \coordinate (N\na\nb h2) at ($(N\na\nb) + ( 0.5, -1.4)$);
+            }
+        }
+
+        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofgpumpkin, line width=3pt];
+        \draw [p] ($(N11) + (-0.55, 0.51)$) -- ($(N12) + (0.55, 0.51)$) -- ($(N12) + (0.55, -1.5)$) -- ($(N11) + (-0.55, -1.5)$) -- cycle;
+        \draw [p] ($(N13) + (-0.55, 0.51)$) -- ($(N21) + (0.55, 0.51)$) -- ($(N21) + (0.55, -1.5)$) -- ($(N13) + (-0.55, -1.5)$) -- cycle;
+        \draw [p] ($(N22) + (-0.55, 0.51)$) -- ($(N23) + (0.55, 0.51)$) -- ($(N23) + (0.55, -1.5)$) -- ($(N22) + (-0.55, -1.5)$) -- cycle;
+        \draw [p] ($(N31) + (-0.55, 0.51)$) -- ($(N33) + (0.55, 0.51)$) -- ($(N33) + (0.55, -1.5)$) -- ($(N31) + (-0.55, -1.5)$) -- cycle;
+
+        \foreach \na in {1, ..., 3}{
+            \draw (N) -- (N\na);
+            \foreach \nb in {1, ..., 3}{
+                \draw (N\na) -- (N\na\nb);
+            }
+        }
+
+        \tikzstyle{t} = [draw, fill, fill=uofgcobalt, rounded corners];
+
+        \draw [t] (N11) -- (N11s1) -- (N11s2) -- cycle;
+        \draw [t] (N12) -- (N12s1) -- (N12s2) -- cycle;
+        \draw [t] (N13) -- (N13s1) -- (N13s2) -- cycle;
+
+        \draw [t] (N21) -- (N21t1) -- (N21t2) -- cycle;
+        \draw [t] (N22) -- (N22h1) -- (N22h2) -- cycle;
+        \draw [t] (N23) -- (N23s1) -- (N23s2) -- cycle;
+
+        \draw [t] (N31) -- (N31s1) -- (N31s2) -- cycle;
+        \draw [t] (N32) -- (N32t1) -- (N32t2) -- cycle;
+        \draw [t] (N33) -- (N33s1) -- (N33s2) -- cycle;
+
+        \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
+        \node [c] at (N) { };
+
+        \foreach \na in {1, ..., 3}{
+            \node [c] at (N\na) { };
+
+            \foreach \nb in {1, ..., 3}{
+                \node [c] at (N\na\nb) { };
+            }
+        }
+    \end{tikzpicture}%}}}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    We get around this by creating many \textbf{more subproblems than processors}, and distributing
+    work dynamically using a queue. The coloured boxes show two ways we might do this.
+
+    \vspace{0.5cm}
+
+    \begin{center}
+    \begin{tikzpicture}[scale=2.5]%{{{
+        \coordinate (R);
+
+        \coordinate (N) at (R);
+
+        \coordinate (N1) at ($(N) + (-4, -0.75)$);
+        \coordinate (N2) at ($(N) + ( 0, -0.75)$);
+        \coordinate (N3) at ($(N) + ( 4, -0.75)$);
+
+
+        \foreach \na in {1, ..., 3}{
+            \coordinate (N\na 1) at ($(N\na) + (-1.25, -1)$);
+            \coordinate (N\na 2) at ($(N\na) + ( 0,    -1)$);
+            \coordinate (N\na 3) at ($(N\na) + ( 1.25, -1)$);
+
+            \foreach \nb in {1, ..., 3}{
+                \coordinate (N\na\nb t1) at ($(N\na\nb) + (-0.5, -1)$);
+                \coordinate (N\na\nb t2) at ($(N\na\nb) + ( 0.5, -1)$);
+
+                \coordinate (N\na\nb s1) at ($(N\na\nb) + (-0.3, -0.6)$);
+                \coordinate (N\na\nb s2) at ($(N\na\nb) + ( 0.3, -0.6)$);
+
+                \coordinate (N\na\nb h1) at ($(N\na\nb) + (-1.5, -3)$);
+                \coordinate (N\na\nb h2) at ($(N\na\nb) + ( 1.5, -3)$);
+            }
+        }
+
+        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofgpumpkin, line width=3pt];
+        \tikzstyle{q} = [draw, rounded corners, dashed, color=uofglawn, line width=3pt];
+
+        \foreach \na in {1, ..., 3}{
+            \foreach \nb in {1, ..., 3}{
+                \draw [p] ($(N\na\nb) + (-0.55, 0.51)$) -- ($(N\na\nb) + (0.55, 0.51)$) --
+                ($(N\na\nb) + (0.55, -1.5)$) -- ($(N\na\nb) + (-0.55, -1.5)$) -- cycle;
+            }
+
+            \draw [q] ($(N\na 1) + (-0.65, 1.31)$) -- ($(N\na 3) + (0.65, 1.31)$) --
+            ($(N\na 3) + (0.65, -1.6)$) -- ($(N\na 1) + (-0.65, -1.6)$) -- cycle;
+        }
+
+        \foreach \na in {1, ..., 3}{
+            \draw (N) -- (N\na);
+            \foreach \nb in {1, ..., 3}{
+                \draw (N\na) -- (N\na\nb);
+            }
+        }
+
+        \tikzstyle{t} = [draw, fill, fill=uofgcobalt, rounded corners];
+        \foreach \na in {1, ..., 3}{
+            \foreach \nb in {1, ..., 3}{
+                \draw [t] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+            }
+        }
+
+        \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
+        \node [c] at (N) { };
+
+        \foreach \na in {1, ..., 3}{
+            \node [c] at (N\na) { };
+
+            \foreach \nb in {1, ..., 3}{
+                \node [c] at (N\na\nb) { };
+            }
+        }
+
+        \node [c] at (N21t1) { };
+        \node at (N21t1) { $\star$ };
+    \end{tikzpicture}%}}}
+    \end{center}
+
+    \vspace{0.5cm}
+
+    Work splitting strategies do not just affect balance: above, if work is split between two
+    processors using the green splitting strategy, the solution (marked $\star$) is found more
+    quickly than if the work is split by the yellow strategy, even though yellow gives
+    better balance.
 }
 
 \end{columns}
@@ -277,12 +555,12 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
     \end{tikzpicture}\end{center}
 \end{wrapfigure}
 
-    Combinatorial optimization is, in general, a \textbf{hard problem} (like the famous
-    \textbf{travelling salesman problem}): every additional variable we add in can double the
-    difficulty of finding a solution, so the time taken to solve a problem grows exponentially. In
-    practice we can usually avoid this worst case by combining strong inference, symmetry breaking,
-    carefully selected heuristics, and intelligent search, while learning from failure.  However,
-    solving these problems can still take longer than we would like.
+    These graph problems are \textbf{hard} (like the famous \textbf{travelling salesman problem}):
+    every additional item we add in can double the difficulty of finding a solution, so the time
+    taken to solve a problem grows exponentially. In practice we can usually avoid this worst case
+    by combining strong inference, symmetry breaking, carefully selected heuristics, and intelligent
+    search, while learning from failure.  However, solving these problems can still take longer than
+    we would like.
 
     \medskip
 
@@ -292,26 +570,46 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
     \medskip
 
-    In general, we may do this by splitting problems up into evenly sized, independent pieces of work,
-    which may be evaluated in parallel. However, combinatorial optimisation
-    problems tend to be \textbf{highly irregular} (cannot be split into evenly sized pieces) and
-    require \textbf{speculative parallelism} (the pieces have dependencies upon each other, and we
-    must guess what the answer might be allow parallel evaluation).
+    In general, we may do this by splitting problems up into evenly sized, independent pieces of
+    work, which may be evaluated in parallel. However, combinatorial optimisation problems tend to
+    be \textbf{highly irregular} (cannot be split into evenly sized pieces) and require
+    \textbf{speculative parallelism} (the pieces have dependencies upon each other, and we must
+    guess what the answer might be allow parallel evaluation).
 
     \medskip
 
-    Despite this, results can be favourable. Our approach uses parallelism to explicitly
-    \textbf{introduce diversity} into a search process to offset the weakest choices made by
-    heuristics, so our parallel workers are reducing our commitment to potentially costly early
-    mistakes. This is combined with late rebalancing, to give good work balance with low overheads
-    and good scalability.
+    Despite this, our results are favourable: we can give substantial speedups to state-of-the-art
+    algorithms. Our approach uses parallelism to explicitly \textbf{introduce diversity} into a
+    search process to offset the weakest choices made by heuristics, so our parallel workers are
+    reducing our commitment to potentially costly early mistakes. This is combined with late
+    rebalancing, to give good work balance with low overheads and good scalability. Finally, we
+    have shown how to treat backjumping as a ``fold with left-zero elements'', to allow parallel
+    search without risking an absolute slowdown.
+}
+
+\def\bysame{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+
+\block{References}{
+    \small
+    Ciaran McCreesh, Patrick Prosser: A Parallel, Backjumping Subgraph Isomorphism Algorithm using
+    Supplemental Graphs. Submitted to CP 2015. \\
+    \bysame: The Shape of the Search Tree for the Maximum Clique Problem,
+    and the Implications for Parallel Branch and Bound. ACM Transactions on Parallel Computing
+    Volume 2 Issue 1 (2015). \\
+    \bysame: A Parallel Branch and Bound Algorithm for the Maximum Labelled
+    Clique Problem. Optimization Letters (2014). \\
+    \bysame: Multi-Threading a State-of-the-Art Maximum Clique Algorithm.
+    Algorithms 6(4): 618-635 (2013).
 }
 
 {
     \colorlet{blockbodybgcolor}{uofgsandstone}
     \colorlet{blocktitlebgcolor}{uofgsandstone}
     \block[bodyverticalshift=-0.5cm]{}{
-        \texttt{c.mccreesh.1@research.gla.ac.uk}
+        Second year PhD student, supervised by Patrick
+        Prosser and David Manlove. SICSA research theme: modelling and abstraction. This work was
+        supported by the Engineering and Physical Sciences Research Council [grant number
+        EP/K503058/1]. \hfill \texttt{c.mccreesh.1@research.gla.ac.uk}
     }
 }
 
