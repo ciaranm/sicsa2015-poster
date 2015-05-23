@@ -99,10 +99,13 @@
     \block[bodyverticalshift=0cm, bodyinnersep=3mm]{}{
         \centering\begin{minipage}{0.94\textwidth}
             \textbf{Graphs} allows us to model complex and dynamic relationships, and can be used to
-            represent industrial \textbf{optimisation} and \textbf{scheduling} problems.  Our
-            research investigates how we can \textbf{exploit parallelism} present in today's
-            multi-core processors to speed up solving \NP-hard graph problems, or to allow us to
-            tackle larger or more complicated problems in the time we have.
+            represent industrial \textbf{optimisation} and \textbf{scheduling} problems. Many
+            interesting graph properties are \NP-hard (adding just one additional vertex doubles
+            the difficulty), but practical algorithms can avoid hitting an exponential worst-case
+            for many interesting inputs. Our research investigates how we can \textbf{exploit
+            the parallelism} present in today's multi-core processors to speed up solving hard graph
+            problems, or to allow us to tackle larger or more complicated
+            problems in the time we have.
         \end{minipage}
     }
 }
@@ -153,16 +156,16 @@
 
 Suppose we need to \textbf{schedule a day's meetings}. If a person needs to attend both meeting 3
 and meeting 6, then these two meetings cannot be held at the same time. We can model this as a graph
-problem: we draw a circle for each meeting, and put a line between two circles if these two meetings
-must occur at different times. We then want to colour in these circles, giving adjacent circles
+problem: we have a vertex for each meeting, and an edge between two vertices if these two meetings
+must occur at different times. We then want to colour in vertices, giving adjacent vertices
 different colours, and using as few colours as possible. By treating different colours as different
 time slots, colouring in the graph gives us an optimal meeting schedule.
 
 \medskip
 
 We can handle richer constraints: we might have a limit on how many circles any colour can be used
-in (if we only have a \textbf{limited number of meeting rooms}), or we might want each colour to be
-used on the same number of circles (for a \textbf{balanced workload}).
+in (if we only have a limited number of meeting rooms), or we might want each colour to be used on
+the same number of circles (for a balanced workload).
 
 \medskip
 
@@ -213,7 +216,7 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 }
 
 \block{Subgraph Isomorphism (Finding Patterns)}{
-\begin{wrapfigure}[6]{r}{0.38\linewidth}
+\begin{wrapfigure}[11]{r}{0.38\linewidth}
     \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
         \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Na) at (1,  0) {1};
         \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nb) at (1, -2) {2};
@@ -242,6 +245,31 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
         \draw [edge] (N5) -- (N6);
         \draw [ledge] (N2) to [in=45, out=315] (N6);
 
+        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Ma) at (1, -7.5) {1};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Mb) at (0, -9.5) {2};
+        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (Mc) at (2, -9.5) {3};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (Md) at (1, -11.5) {4};
+
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M1) at (5.5, -7.5) {1};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M2) at (7.5, -7.5) {2};
+        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M3) at (5.5, -9.5) {3};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M4) at (7.5, -9.5) {4};
+        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (M5) at (6.5, -11.5) {5};
+
+        \draw [->, ledge] (Mc) -> (Md);
+        \draw [->, ledge] (Md) -- (Mb);
+        \draw [->, edge] (Ma) -> (Mb);
+        \draw [->, edge] (Mb) -> (Mc);
+        \draw [->, edge] (Ma) -> (Mc);
+
+        \draw [->, ledge] (M1) -> (M2);
+        \draw [->, ledge] (M2) -> (M4);
+        \draw [->, ledge] (M3) -> (M1);
+        \draw [->, ledge] (M3) -> (M4);
+        \draw [->, edge] (M3) -> (M4);
+        \draw [->, edge] (M3) -> (M5);
+        \draw [->, edge] (M4) -> (M5);
+
     \end{tikzpicture}\end{center}
 \end{wrapfigure}
 
@@ -260,10 +288,10 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
 \column{0.5}
 
-\block{Backtracking and Backjumping Search as a Tree}{
-    Practical algorithms for these problems combine inference (like you do when crossing out numbers
-    when solving a Sudoku) and backtracking search (when we have to guess).  We may view the
-    recursive calls made by a backtracking search algorithm as forming a tree:
+\block{Backtracking Search as a Tree, and Backjumping}{
+    Practical algorithms for these problems combine \textbf{inference} (like you do when crossing
+    out numbers when solving a Sudoku) and \textbf{backtracking search} (when we have to guess).  We
+    may view the recursive calls made by a backtracking search algorithm as forming a tree:
 
     \vspace{0.5cm}
     \begin{center}
@@ -378,18 +406,17 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
     \vspace{0.5cm}
 
-    A backtracking search algorithm is like a depth-first search over such a tree.  When a failure
-    is encountered, we could just backtrack. \textbf{Backjumping} is a technique which sometimes
-    allows us to backtrack several steps immediately. We show this as a $\uparrow$ symbol. This
-    allows us to eliminate some subproblems based upon information discovered during search. This
-    also happens in branch-and-bound algorithms for optimisation problems, where we dynamically
+    A backtracking search is like performing a depth-first search.  \textbf{Backjumping} is a
+    technique which sometimes allows us to backtrack several steps immediately, eliminating some
+    subproblems based upon information discovered during search (we show this as a $\uparrow$
+    symbol).  Similarly, \textbf{branch-and-bound} algorithms for optimisation problems dynamically
     eliminate subtrees which cannot beat the best solution found so far.
 }
 
-\block{Parallel Search: Work-Splitting Matters}{
-    Viewing recursive calls as a tree, we can \textbf{evaluate sub-trees in parallel}. However,
-    static decomposition leads to \textbf{poor work balance}, because we do not know up-front how
-    large each subtree is.
+\block{Irregular Parallel Search: Work-Splitting Matters}{
+    Viewing recursive calls as a tree, we can \textbf{evaluate many sub-trees simultaneously} using
+    parallel hardware. However, static decomposition leads to \textbf{poor work balance}, because we
+    do not know up-front how large each subtree is:
 
     \vspace{1cm}
 
@@ -420,7 +447,7 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
             }
         }
 
-        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofgpumpkin, line width=3pt];
+        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofglawn, line width=3pt];
         \draw [p] ($(N11) + (-0.55, 0.51)$) -- ($(N12) + (0.55, 0.51)$) -- ($(N12) + (0.55, -1.5)$) -- ($(N11) + (-0.55, -1.5)$) -- cycle;
         \draw [p] ($(N13) + (-0.55, 0.51)$) -- ($(N21) + (0.55, 0.51)$) -- ($(N21) + (0.55, -1.5)$) -- ($(N13) + (-0.55, -1.5)$) -- cycle;
         \draw [p] ($(N22) + (-0.55, 0.51)$) -- ($(N23) + (0.55, 0.51)$) -- ($(N23) + (0.55, -1.5)$) -- ($(N22) + (-0.55, -1.5)$) -- cycle;
@@ -460,12 +487,13 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
     \end{tikzpicture}%}}}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.7cm}
 
-    We get around this by creating many \textbf{more subproblems than processors}, and distributing
-    work dynamically using a queue. The coloured boxes show two ways we might do this.
+    These algorithms are said to be \textbf{irregular}. One way to get around this is by creating
+    many \textbf{more subproblems than processors}, and distributing work dynamically using a queue.
+    The coloured boxes show two ways we might do this:
 
-    \vspace{0.5cm}
+    \vspace{0.6cm}
 
     \begin{center}
     \begin{tikzpicture}[scale=2.5]%{{{
@@ -496,7 +524,7 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
         }
 
         \tikzstyle{p} = [draw, rounded corners, dashed, color=uofgpumpkin, line width=3pt];
-        \tikzstyle{q} = [draw, rounded corners, dashed, color=uofglawn, line width=3pt];
+        \tikzstyle{q} = [draw, rounded corners, dashed, color=uofgthistle, line width=3pt];
 
         \foreach \na in {1, ..., 3}{
             \foreach \nb in {1, ..., 3}{
@@ -516,34 +544,44 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
         }
 
         \tikzstyle{t} = [draw, fill, fill=uofgcobalt, rounded corners];
+        \tikzstyle{u} = [draw, fill, fill=white, rounded corners];
         \foreach \na in {1, ..., 3}{
             \foreach \nb in {1, ..., 3}{
-                \draw [t] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                \ifthenelse{\na = 1 \OR \na = 2}{
+                    \draw [t] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                }{
+                    \draw [u] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
+                }
             }
         }
 
         \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
+        \tikzstyle{e} = [draw, forbidden sign, fill, fill=white];
         \node [c] at (N) { };
 
         \foreach \na in {1, ..., 3}{
             \node [c] at (N\na) { };
 
             \foreach \nb in {1, ..., 3}{
-                \node [c] at (N\na\nb) { };
+                \ifthenelse{\na = 1 \OR \na = 2 \OR \na\nb = 31}{
+                    \node [c] at (N\na\nb) { };
+                }{
+                    \node [e] at (N\na\nb) { };
+                }
             }
         }
 
-        \node [c] at (N21t1) { };
-        \node at (N21t1) { $\star$ };
+        \node [c] at (N31t1) { };
+        \node at (N31t1) { $\star$ };
     \end{tikzpicture}%}}}
     \end{center}
 
     \vspace{0.5cm}
 
-    Work splitting strategies do not just affect balance: above, if work is split between two
-    processors using the green splitting strategy, the solution (marked $\star$) is found more
-    quickly than if the work is split by the yellow strategy, even though yellow gives
-    better balance.
+    Work splitting strategies do not just affect balance: above, if work is split between four
+    processors using the purple splitting strategy, the solution (marked $\star$) is found more
+    quickly than if the work is split by the yellow strategy, even though purple gives
+    poor balance.
 }
 
 \end{columns}
@@ -555,36 +593,34 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
     \end{tikzpicture}\end{center}
 \end{wrapfigure}
 
-    These graph problems are \textbf{hard} (like the famous \textbf{travelling salesman problem}):
-    every additional item we add in can double the difficulty of finding a solution, so the time
-    taken to solve a problem grows exponentially. In practice we can usually avoid this worst case
-    by combining strong inference, symmetry breaking, carefully selected heuristics, and intelligent
-    search, while learning from failure.  However, solving these problems can still take longer than
-    we would like.
+    Even with strong inference and intelligent backjumping, solving these hard graph problems can
+    take longer than we would like.  Modern processors have at least two cores, and machines with
+    dozens of cores are easily available. We might hope that we could use these extra cores to make
+    our programs \textbf{run faster}, or at least to \textbf{solve larger or harder problems} in the
+    time we have.
 
     \medskip
 
-    Modern processors have at least two, and sometimes as many as fifteen, processing cores. We
-    might hope that we could use these cores to make our programs \textbf{run faster}, or at least
-    to \textbf{solve larger or harder problems} in the time we have.
+    Typically, we do this by splitting problems up into evenly sized, independent pieces of work,
+    which may be evaluated in parallel. However, combinatorial optimisation problems tend to be
+    highly irregular (cannot be split into evenly sized pieces) and require \textbf{speculative
+    parallelism} (the pieces have dependencies upon each other, and we must guess what the answer
+    might be allow parallel evaluation).
 
     \medskip
 
-    In general, we may do this by splitting problems up into evenly sized, independent pieces of
-    work, which may be evaluated in parallel. However, combinatorial optimisation problems tend to
-    be \textbf{highly irregular} (cannot be split into evenly sized pieces) and require
-    \textbf{speculative parallelism} (the pieces have dependencies upon each other, and we must
-    guess what the answer might be allow parallel evaluation).
+    Despite this, our results are favourable: we have demonstrated substantial speedups over
+    state-of-the-art algorithms for the maximum clique and subgraph isomorphism problems. Our
+    approach uses parallelism to explicitly \textbf{introduce diversity} into a search process to
+    offset the weakest choices made by heuristics, so our parallel workers are reducing our
+    commitment to potentially costly early mistakes. This is combined with late rebalancing, to give
+    good work balance with low overheads and good scalability. We refactor backjumping to be a
+    ``fold with left-zero elements'', to allow parallel search without risking an absolute slowdown.
 
     \medskip
 
-    Despite this, our results are favourable: we can give substantial speedups to state-of-the-art
-    algorithms. Our approach uses parallelism to explicitly \textbf{introduce diversity} into a
-    search process to offset the weakest choices made by heuristics, so our parallel workers are
-    reducing our commitment to potentially costly early mistakes. This is combined with late
-    rebalancing, to give good work balance with low overheads and good scalability. Finally, we
-    have shown how to treat backjumping as a ``fold with left-zero elements'', to allow parallel
-    search without risking an absolute slowdown.
+    In the future we will look at graph colouring, and extend our work to clusters of multi-core
+    computers.
 }
 
 \def\bysame{\leavevmode\hbox to3em{\hrulefill}\thinspace}

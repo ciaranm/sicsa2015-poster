@@ -1,10 +1,13 @@
 # vim: set et ft=gnuplot sw=4 :
 
-set terminal tikz size 9in,8in
+set terminal tikz size 9in,7.5in
 set output "gen-graph-speedup.tex"
 
 set xlabel "Number of threads" offset 0,-5
 set ylabel "Speedup" offset -8,0
+
+set format x '%0.0f'
+set format y '%0.0f'
 
 set key off
 
