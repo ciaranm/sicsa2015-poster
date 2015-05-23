@@ -614,8 +614,9 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
     approach uses parallelism to explicitly \textbf{introduce diversity} into a search process to
     offset the weakest choices made by heuristics, so our parallel workers are reducing our
     commitment to potentially costly early mistakes. This is combined with late rebalancing, to give
-    good work balance with low overheads and good scalability. We refactor backjumping to be a
-    ``fold with left-zero elements'', to allow parallel search without risking an absolute slowdown.
+    good work balance with low overheads and good scalability. Finally, we show how to refactor
+    backjumping to be a ``fold with left-zero elements'', to allow parallel search without risking
+    an absolute slowdown.
 
     \medskip
 
