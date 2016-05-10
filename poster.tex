@@ -6,12 +6,14 @@
 \usepackage{wrapfig}
 \usepackage{microtype}
 \usepackage{gnuplot-lua-tikz}
+\usepackage{amssymb}
+\usepackage{amsmath}
 
 \usepackage{lmodern}
 \renewcommand*\familydefault{\sfdefault}
 \usepackage[T1]{fontenc}
 
-\title{Solving Hard Graph Problems in Parallel}
+\title{Solving Hard Subgraph Problems in Parallel}
 \author{Ciaran McCreesh and Patrick Prosser}
 \institute{University of Glasgow, Glasgow, Scotland}
 \titlegraphic{\includegraphics[keepaspectratio=true,scale=2.5]{UoG_keyline.pdf}}
@@ -90,12 +92,14 @@
 \tikzset{edge/.style={line width=3pt, color=uofgsandstone}}
 \tikzset{ledge/.style={line width=3pt, color=uofgsandstone!40!white}}
 
+\setlength\intextsep{0pt}
+
 \begin{document}
 \maketitle
 
 {
-    \colorlet{blockbodybgcolor}{uofgpumpkin}
-    \colorlet{blocktitlebgcolor}{uofgpumpkin}
+    \colorlet{blockbodybgcolor}{uofgcobalt}
+    \colorlet{blocktitlebgcolor}{uofgcobalt}
     \block[bodyverticalshift=0cm, bodyinnersep=3mm]{}{
         \centering\begin{minipage}{0.94\textwidth}
             \textbf{Graphs} allow us to model complex and dynamic relationships, and can be used to
@@ -113,77 +117,19 @@
 \begin{columns}
 \column{0.5}
 
-\block{Graph Colouring (Minimising Resource Usage)}{
-\begin{wrapfigure}[8]{r}{0.38\linewidth}
-    \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
-        \newcount \c
-        \foreach \n in {1, ..., 9}{
-            \c=\n
-            \multiply\c by -40
-            \advance\c by 130
-
-            \ifthenelse{\n = 1 \OR \n = 2 \OR \n = 4 \OR \n = 7}{
-                \node [draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
-            }{
-                \ifthenelse{\n = 3 \OR \n = 5 \OR \n = 4 \OR \n = 7 \OR \n = 9}{
-                    \node [draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
-                }{
-                    \ifthenelse{\n = 6}{
-                        \node [draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
-                    }{
-                        \node [draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
-                    }
-                }
-            }
-        }
-
-        \draw [ledge] (N1) -- (N5); \draw [ledge] (N1) -- (N9);
-        \draw [ledge] (N2) -- (N5); \draw [ledge] (N2) -- (N6); \draw [ledge] (N2) -- (N8);
-        \draw [ledge] (N3) -- (N4); \draw [ledge] (N3) -- (N7);
-        \draw [ledge] (N4) -- (N8);
-        \draw [ledge] (N5) -- (N6);
-        \draw [ledge] (N7) -- (N8);
-        \draw [ledge] (N8) -- (N9);
-
-        \draw [ledge] (N1) -- (N3);
-        \draw [ledge] (N6) -- (N8);
-        \draw [ledge] (N1) -- (N6);
-        \draw [ledge] (N1) -- (N8);
-        \draw [ledge] (N3) -- (N6);
-        \draw [ledge] (N3) -- (N8);
-    \end{tikzpicture}\end{center}
-\end{wrapfigure}
-
-Suppose we need to \textbf{schedule a day's meetings}. If a person needs to attend both meeting 3
-and meeting 6, then these two meetings cannot be held at the same time. We can model this as a graph
-problem: we have a vertex for each meeting, and an edge between two vertices if these two meetings
-must occur at different times. We then want to colour in vertices, giving adjacent vertices
-different colours, and using as few colours as possible. By treating different colours as different
-time slots, colouring in the graph gives us an optimal meeting schedule.
-
-\medskip
-
-We can handle richer constraints: we might have a limit on how many vertices any colour can be used
-in (if we only have a limited number of meeting rooms), or we might want each colour to be used on
-the same number of vertices (for a balanced workload).
-
-\medskip
-
-More generally, graph colouring tells us how to use \textbf{as few resources as possible},
-respecting conflicts. Industrial uses include call centre staff allocation, scheduling jobs on
-machinery, radio bandwidth allocation, and reducing the impact of vehicle maintenance.
-}
-
 \block{Clique (Finding Groups of Mutual Friends)}{
-\begin{wrapfigure}[8]{r}{0.38\linewidth}
+\begin{wrapfigure}[8]{r}{0.4\linewidth}
+    \vspace*{0.5cm}
     \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
         \newcount \c
         \foreach \n in {1, ..., 8}{
             \c=\n \advance\c by -1 \multiply\c by -360 \divide\c by 8 \advance\c by 112.5
             \ifthenelse{\n = 1 \OR \n = 3 \OR \n = 6 \OR \n = 7}{
-                \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+                \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at
+                (\the\c:2.2) {\vphantom{0}};
             }{
-                \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\n};
+                \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2)
+                {\vphantom{0}};
             }
         }
 
@@ -210,30 +156,40 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
     A \textbf{clique} can be thought of as a group of people, where everyone in the group knows
     everyone else in the group.  Finding cliques lets us select \textbf{as much of a resource as
-    possible}, respecting compatibility rules. Clique-finding algorithms have been used to improve
-    the reliability of communications and networking protocols, for
-    verifying electronic circuits, for social media analysis, for targeted advertising, and for controlling flying robots.
-}
+    possible}, respecting compatibility rules. Clique-finding algorithms have been used for
+        verifying electronic circuits, to improve the reliability of communications and networking
+        protocols, for social media analysis, for targeted advertising, and for controlling flying
+        robots.
+    }
 
 \block{Subgraph Isomorphism (Finding Patterns)}{
-\begin{wrapfigure}[11]{r}{0.38\linewidth}
+\begin{wrapfigure}[11]{r}{0.4\linewidth}
+    \vspace*{0.5cm}
     \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
-        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Na) at (1,  0) {1};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nb) at (1, -2) {2};
-        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (Nc) at (0, -4) {3};
-        \node[draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (Nd) at (2, -4) {4};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Na) at (1,  0)
+        {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nb) at (1, -2)
+        {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nc) at (0, -4)
+        {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nd) at (2, -4)
+        {\vphantom{0}};
 
         \draw [edge] (Na) -- (Nb);
         \draw [edge] (Nb) -- (Nc);
         \draw [edge] (Nc) -- (Nd);
         \draw [edge] (Nb) -- (Nd);
 
-        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N1) at (5.5,  0) {1};
-        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N2) at (7.5,  0) {2};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N3) at (5.5, -2) {3};
-        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N4) at (7.5, -2) {4};
-        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (N5) at (5.5, -4) {5};
-        \node[draw, circle, fill=uofgthistle, inner sep=5pt, font=\bfseries] (N6) at (7.5, -4) {6};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N1) at (7.5,  0) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N2) at (9.5,  0) {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N3) at (7.5, -2) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N4) at (9.5, -2) {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N5) at (7.5, -4) {\vphantom{0}};
+        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N6) at (9.5, -4) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N7) at (5.5,  0) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N8) at (5.5, -2) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N9) at (5.5, -4) {\vphantom{0}};
+        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N10) at (7.5, -6) {\vphantom{0}};
 
         \draw [ledge] (N1) -- (N2);
         \draw [edge] (N1) -- (N3);
@@ -244,179 +200,143 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
         \draw [ledge] (N4) -- (N6);
         \draw [edge] (N5) -- (N6);
         \draw [ledge] (N2) to [in=45, out=315] (N6);
-
-        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (Ma) at (1, -7.5) {1};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Mb) at (0, -9.5) {2};
-        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (Mc) at (2, -9.5) {3};
-        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (Md) at (1, -11.5) {4};
-
-        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M1) at (5.5, -7.5) {1};
-        \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M2) at (7.5, -7.5) {2};
-        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M3) at (5.5, -9.5) {3};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M4) at (7.5, -9.5) {4};
-        \node[draw, circle, fill=uofglawn, inner sep=5pt, font=\bfseries] (M5) at (6.5, -11.5) {5};
-
-        \draw [->, ledge] (Mc) -> (Md);
-        \draw [->, ledge] (Md) -- (Mb);
-        \draw [->, edge] (Ma) -> (Mb);
-        \draw [->, edge] (Mb) -> (Mc);
-        \draw [->, edge] (Ma) -> (Mc);
-
-        \draw [->, ledge] (M1) -> (M2);
-        \draw [->, ledge] (M2) -> (M4);
-        \draw [->, ledge] (M3) -> (M1);
-        \draw [->, ledge] (M3) -> (M4);
-        \draw [->, edge] (M3) -> (M4);
-        \draw [->, edge] (M3) -> (M5);
-        \draw [->, edge] (M4) -> (M5);
-
+        \draw [ledge] (N1) -- (N7);
+        \draw [ledge] (N5) -- (N9);
+        \draw [ledge] (N7) -- (N8);
+        \draw [ledge] (N8) -- (N9);
+        \draw [ledge] (N6) -- (N10);
+        \draw [ledge] (N9) -- (N10);
     \end{tikzpicture}\end{center}
 \end{wrapfigure}
 
     Many real-world phenomena, such as social networks, transport routes, financial transactions,
     and chemical molecules, can be described using graphs. We may wish to \textbf{find interesting
     structures} inside these graphs. The subgraph isomorphism problem is to find a small ``pattern''
-    graph in a big ``target'' graph. This is useful in drug design, in fraud detection, and in fault
-    diagnosis.
+    graph in a big ``target'' graph. This is useful in drug design, in fraud detection, in fault
+    diagnosis, and in source code analysis.
+}
 
-    \medskip
-
+\block{Maximum Common Subgraph (Comparing Graphs)}{
     We can also \textbf{compare two graphs}. We do this via the maximum common subgraph problem,
-    which is to find the largest subgraph common to two bigger graphs. This is useful in computer
-    vision, database searches, and biochemistry.
+    which is to find the largest subgraph common to two bigger graphs. This is useful directly in
+    computer vision, database searches, and biochemistry, and it also lets us find
+    \textbf{approximate solutions} when a subgraph isomorphism query fails.
+
+    \vspace*{1cm}
+
+    \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
+        \begin{scope}[]
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M1) at (90:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M2) at (150:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M3) at (30:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M4) at (210:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M5) at (330:2) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M6) at (270:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M7) at ($(210:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M8) at ($(330:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M9) at ($(270:2) + (M6)$) {\vphantom{0}};
+
+            \draw [edge] (M1) -- (M2);
+            \draw [edge] (M2) -- (M4);
+            \draw [edge] (M3) -- (M5);
+            \draw [ledge] (M4) -- (M6);
+            \draw [ledge] (M5) -- (M6);
+            \draw [edge] (M3) -- (M1);
+            \draw [ledge] (M6) -- (M7);
+            \draw [ledge] (M6) -- (M8);
+            \draw [ledge] (M6) -- (M9);
+            \draw [edge] (M7) -- (M9);
+            \draw [edge] (M8) -- (M9);
+        \end{scope}
+
+        \begin{scope}[xshift=7cm]
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M1) at (90:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M2) at (150:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M3) at (30:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M4) at (210:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M5) at (330:2) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M6) at (270:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M7) at ($(210:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M8) at ($(270:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (M9) at ($(330:2) + (M8)$) {\vphantom{0}};
+
+            \draw [edge] (M1) -- (M2);
+            \draw [edge] (M2) -- (M4);
+            \draw [edge] (M3) -- (M5);
+            \draw [ledge] (M4) -- (M6);
+            \draw [ledge] (M5) -- (M6);
+            \draw [edge] (M3) -- (M1);
+            \draw [ledge] (M6) -- (M7);
+            \draw [edge] (M7) -- (M8);
+            \draw [edge] (M8) -- (M9);
+        \end{scope}
+
+        \begin{scope}[xshift=17cm]
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M1) at (90:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M2) at (150:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M3) at (30:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M4) at (210:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M5) at (330:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M6) at (270:2) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M7) at ($(210:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M8) at ($(330:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M9) at ($(270:2) + (M6)$) {\vphantom{0}};
+
+            \draw [edge] (M1) -- (M2);
+            \draw [edge] (M2) -- (M4);
+            \draw [edge] (M3) -- (M5);
+            \draw [edge] (M4) -- (M6);
+            \draw [edge] (M5) -- (M6);
+            \draw [edge] (M3) -- (M1);
+            \draw [ledge] (M6) -- (M7);
+            \draw [edge] (M6) -- (M8);
+            \draw [ledge] (M6) -- (M9);
+            \draw [ledge] (M7) -- (M9);
+            \draw [ledge] (M8) -- (M9);
+        \end{scope}
+
+        \begin{scope}[xshift=24cm]
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M1) at (90:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M2) at (150:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M3) at (30:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M4) at (210:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M5) at (330:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M6) at (270:2) {\vphantom{0}};
+            \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (M7) at ($(210:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M8) at ($(270:2) + (M6)$) {\vphantom{0}};
+            \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (M9) at ($(330:2) + (M8)$) {\vphantom{0}};
+
+            \draw [edge] (M1) -- (M2);
+            \draw [edge] (M2) -- (M4);
+            \draw [edge] (M3) -- (M5);
+            \draw [edge] (M4) -- (M6);
+            \draw [edge] (M5) -- (M6);
+            \draw [edge] (M3) -- (M1);
+            \draw [edge] (M6) -- (M7);
+            \draw [ledge] (M7) -- (M8);
+            \draw [ledge] (M8) -- (M9);
+        \end{scope}
+    \end{tikzpicture}\end{center}
+
+    \vspace*{0.8cm}
+
+    An interesting variation of the problem requires the common subgraph to be \textbf{connected},
+    as shown on the right---this can give more sensible results when comparing molecules.
 }
 
 \column{0.5}
 
-\block{Backtracking Search as a Tree, and Backjumping}{
+\block{Parallel Search: Irregularity, Heuristics, and Diversity}{
     Practical algorithms for these problems combine \textbf{inference} (like you do when crossing
-    out numbers when solving a Sudoku) and \textbf{backtracking search} (when we have to guess).  We
-    may view the recursive calls made by a backtracking search algorithm as forming a tree:
+    out numbers when solving a Sudoku puzzle) and \textbf{backtracking search} (when we have to
+    guess).  Even with the best algorithms and implementations, though, solving hard graph problems
+    can take longer than we would like. We might hope that we could use the multiple cores provided
+    by modern processors to make our programs \textbf{run faster}, or at least to \textbf{solve
+    larger or harder problems} in the time we have.
 
-    \vspace{0.5cm}
-    \begin{center}
-    \begin{tikzpicture}[scale=2.5]%{{{
-        \coordinate (R);
-
-        \coordinate (N) at (R);
-
-        \coordinate (N1) at ($(N) + (-4, -0.75)$);
-        \coordinate (N2) at ($(N) + ( 0, -0.75)$);
-        \coordinate (N3) at ($(N) + ( 4, -0.75)$);
-
-        \foreach \na in {1, ..., 3}{
-            \coordinate (N\na 1) at ($(N\na) + (-1.25, -1)$);
-            \coordinate (N\na 2) at ($(N\na) + ( 0,    -1)$);
-            \coordinate (N\na 3) at ($(N\na) + ( 1.25, -1)$);
-
-            \foreach \nb in {1, ..., 3}{
-                \coordinate (N\na\nb t1) at ($(N\na\nb) + (-0.5, -1)$);
-                \coordinate (N\na\nb t2) at ($(N\na\nb) + ( 0.5, -1)$);
-
-                \coordinate (N\na\nb s1) at ($(N\na\nb) + (-0.3, -0.6)$);
-                \coordinate (N\na\nb s2) at ($(N\na\nb) + ( 0.3, -0.6)$);
-
-                \coordinate (N\na\nb h1) at ($(N\na\nb) + (-1.5, -3)$);
-                \coordinate (N\na\nb h2) at ($(N\na\nb) + ( 1.5, -3)$);
-            }
-        }
-
-        \foreach \na in {1, ..., 3}{
-            \draw (N) -- (N\na);
-            \foreach \nb in {1, ..., 3}{
-                \draw (N\na) -- (N\na\nb);
-            }
-        }
-
-        \tikzstyle{tf} = [draw, fill, fill=uofgcobalt, rounded corners];
-        \tikzstyle{ts} = [draw, fill, fill=white, rounded corners];
-        \foreach \na in {1, ..., 3}{
-            \foreach \nb in {1, ..., 3}{
-                \ifthenelse{\na = 1}{
-                    \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                }{}
-
-                \ifthenelse{\na = 2}{
-                    \ifthenelse{\na\nb = 21}{
-                        \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                    }{}
-                    \ifthenelse{\na\nb = 22}{
-                        \draw [tf] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                    }{}
-                    \ifthenelse{\na\nb = 23}{
-                        \draw [ts] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                    }{}
-                }{}
-
-                \ifthenelse{\na = 3}{
-                    \draw [ts] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                }{}
-            }
-        }
-
-        \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
-        \tikzstyle{cf} = [draw, circle, fill, fill=uofgcobalt];
-        \tikzstyle{cx} = [draw, forbidden sign, fill, fill=uofgcobalt];
-        \tikzstyle{cs} = [draw, forbidden sign, fill, fill=white];
-        \tikzstyle{cfs} = [draw, circle, fill, fill=white];
-        \node [cx] at (N) { };
-
-        \foreach \na in {1, ..., 3}{
-            \ifthenelse{\na = 1}{
-                \node [cx] at (N\na) { };
-            }{}
-            \ifthenelse{\na = 2}{
-                \node [cf] at (N\na) { };
-                \node [font=\scriptsize] at (N2) { $\uparrow$ };
-            }{}
-            \ifthenelse{\na = 3}{
-                \node [cs] at (N\na) { };
-            }{}
-
-            \foreach \nb in {1, ..., 3}{
-                \ifthenelse{\na = 1}{
-                    \node [cx] at (N\na\nb) { };
-                }{}
-
-                \ifthenelse{\na = 2}{
-                    \ifthenelse{\na\nb = 21}{
-                        \node [cx] at (N\na\nb) { };
-                    }{}
-                    \ifthenelse{\na\nb = 22}{
-                        \node [cf] at (N\na\nb) { };
-                        \node [font=\scriptsize] at (N22) { $\uparrow$ };
-                    }{}
-                    \ifthenelse{\na\nb = 23}{
-                        \node [cs] at (N\na\nb) { };
-                    }{}
-                }{}
-
-                \ifthenelse{\na = 3}{
-                    \ifthenelse{\na\nb = 31}{
-                        \node [cfs] at (N\na\nb) { };
-                        \node [font=\scriptsize] at (N31) { $\uparrow$ };
-                    }{
-                        \node [cs] at (N\na\nb) { };
-                    }
-                }{}
-            }
-        }
-    \end{tikzpicture}%}}}
-    \end{center}
-
-    \vspace{0.5cm}
-
-    A backtracking search is like performing a depth-first search.  \textbf{Backjumping} is a
-    technique which sometimes allows us to backtrack several steps immediately, eliminating some
-    subproblems based upon information discovered during search (we show this as a $\uparrow$
-    symbol).  Similarly, \textbf{branch-and-bound} algorithms for optimisation problems dynamically
-    eliminate subtrees which cannot beat the best solution found so far.
-}
-
-\block{Irregular Parallel Search: Work-Splitting Matters}{
-    Viewing recursive calls as a tree, we can \textbf{evaluate many sub-trees simultaneously} using
-    parallel hardware. However, static decomposition leads to \textbf{poor work balance}, because we
-    do not know up-front how large each subtree is:
+    We may view the recursive calls made by a backtracking search algorithm as forming a tree. This
+    lets us \textbf{speculatively evaluate many sub-trees simultaneously} using parallel hardware.
+    However, static decomposition often leads to \textbf{poor work balance}:
 
     \vspace{1cm}
 
@@ -447,16 +367,16 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
             }
         }
 
-        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofglawn, line width=3pt];
+        \tikzstyle{p} = [draw, rounded corners, color=uofgrose, fill=uofgrose!50, line width=1pt];
         \draw [p] ($(N11) + (-0.55, 0.51)$) -- ($(N12) + (0.55, 0.51)$) -- ($(N12) + (0.55, -1.5)$) -- ($(N11) + (-0.55, -1.5)$) -- cycle;
         \draw [p] ($(N13) + (-0.55, 0.51)$) -- ($(N21) + (0.55, 0.51)$) -- ($(N21) + (0.55, -1.5)$) -- ($(N13) + (-0.55, -1.5)$) -- cycle;
-        \draw [p] ($(N22) + (-0.55, 0.51)$) -- ($(N23) + (0.55, 0.51)$) -- ($(N23) + (0.55, -1.5)$) -- ($(N22) + (-0.55, -1.5)$) -- cycle;
-        \draw [p] ($(N31) + (-0.55, 0.51)$) -- ($(N33) + (0.55, 0.51)$) -- ($(N33) + (0.55, -1.5)$) -- ($(N31) + (-0.55, -1.5)$) -- cycle;
+        \draw [p] ($(N22) + (-0.55, 0.51)$) -- ($(N23) + (0.68, 0.51)$) -- ($(N23) + (0.68, -1.5)$) -- ($(N22) + (-0.55, -1.5)$) -- cycle;
+        \draw [p] ($(N31) + (-0.68, 0.51)$) -- ($(N33) + (0.55, 0.51)$) -- ($(N33) + (0.55, -1.5)$) -- ($(N31) + (-0.68, -1.5)$) -- cycle;
 
         \foreach \na in {1, ..., 3}{
-            \draw (N) -- (N\na);
+            \draw [edge] (N) -- (N\na);
             \foreach \nb in {1, ..., 3}{
-                \draw (N\na) -- (N\na\nb);
+                \draw [edge] (N\na) -- (N\na\nb);
             }
         }
 
@@ -489,161 +409,82 @@ machinery, radio bandwidth allocation, and reducing the impact of vehicle mainte
 
     \vspace{0.7cm}
 
-    These algorithms are said to be \textbf{irregular}. One way to get around this is by creating
-    many \textbf{more subproblems than processors}, and distributing work dynamically using a queue.
-    The coloured boxes show two ways we might do this:
+    These search trees are said to be \textbf{irregular}, because their sizes vary in unpredictable
+    ways. One way to get around this is by creating many \textbf{more subproblems than processors}.
+    In practice, different work splitting methods give vastly different performance:
 
-    \vspace{0.6cm}
+    \vspace{0.7cm}
 
     \begin{center}
-    \begin{tikzpicture}[scale=2.5]%{{{
-        \coordinate (R);
-
-        \coordinate (N) at (R);
-
-        \coordinate (N1) at ($(N) + (-4, -0.75)$);
-        \coordinate (N2) at ($(N) + ( 0, -0.75)$);
-        \coordinate (N3) at ($(N) + ( 4, -0.75)$);
-
-
-        \foreach \na in {1, ..., 3}{
-            \coordinate (N\na 1) at ($(N\na) + (-1.25, -1)$);
-            \coordinate (N\na 2) at ($(N\na) + ( 0,    -1)$);
-            \coordinate (N\na 3) at ($(N\na) + ( 1.25, -1)$);
-
-            \foreach \nb in {1, ..., 3}{
-                \coordinate (N\na\nb t1) at ($(N\na\nb) + (-0.5, -1)$);
-                \coordinate (N\na\nb t2) at ($(N\na\nb) + ( 0.5, -1)$);
-
-                \coordinate (N\na\nb s1) at ($(N\na\nb) + (-0.3, -0.6)$);
-                \coordinate (N\na\nb s2) at ($(N\na\nb) + ( 0.3, -0.6)$);
-
-                \coordinate (N\na\nb h1) at ($(N\na\nb) + (-1.5, -3)$);
-                \coordinate (N\na\nb h2) at ($(N\na\nb) + ( 1.5, -3)$);
-            }
-        }
-
-        \tikzstyle{p} = [draw, rounded corners, dashed, color=uofgpumpkin, line width=3pt];
-        \tikzstyle{q} = [draw, rounded corners, dashed, color=uofgthistle, line width=3pt];
-
-        \foreach \na in {1, ..., 3}{
-            \foreach \nb in {1, ..., 3}{
-                \draw [p] ($(N\na\nb) + (-0.55, 0.51)$) -- ($(N\na\nb) + (0.55, 0.51)$) --
-                ($(N\na\nb) + (0.55, -1.5)$) -- ($(N\na\nb) + (-0.55, -1.5)$) -- cycle;
-            }
-
-            \draw [q] ($(N\na 1) + (-0.65, 1.31)$) -- ($(N\na 3) + (0.65, 1.31)$) --
-            ($(N\na 3) + (0.65, -1.6)$) -- ($(N\na 1) + (-0.65, -1.6)$) -- cycle;
-        }
-
-        \foreach \na in {1, ..., 3}{
-            \draw (N) -- (N\na);
-            \foreach \nb in {1, ..., 3}{
-                \draw (N\na) -- (N\na\nb);
-            }
-        }
-
-        \tikzstyle{t} = [draw, fill, fill=uofgcobalt, rounded corners];
-        \tikzstyle{u} = [draw, fill, fill=white, rounded corners];
-        \foreach \na in {1, ..., 3}{
-            \foreach \nb in {1, ..., 3}{
-                \ifthenelse{\na = 1 \OR \na = 2}{
-                    \draw [t] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                }{
-                    \draw [u] (N\na\nb) -- (N\na\nb t1) -- (N\na\nb t2) -- cycle;
-                }
-            }
-        }
-
-        \tikzstyle{c} = [draw, circle, fill, fill=uofgcobalt];
-        \tikzstyle{e} = [draw, forbidden sign, fill, fill=white];
-        \node [c] at (N) { };
-
-        \foreach \na in {1, ..., 3}{
-            \node [c] at (N\na) { };
-
-            \foreach \nb in {1, ..., 3}{
-                \ifthenelse{\na = 1 \OR \na = 2 \OR \na\nb = 31}{
-                    \node [c] at (N\na\nb) { };
-                }{
-                    \node [e] at (N\na\nb) { };
-                }
-            }
-        }
-
-        \node [c] at (N31t1) { };
-        \node at (N31t1) { $\star$ };
-    \end{tikzpicture}%}}}
+        \small
+        \input{gen-graph-speedup}
     \end{center}
 
-    \vspace{0.5cm}
+    \vspace{0.7cm}
 
-    Work splitting strategies do not just affect balance: above, if work is split between four
-    processors using the purple splitting strategy, the solution (marked $\star$) is found more
-    quickly than if the work is split by the yellow strategy, even though purple gives
-    poor balance.
+    Our research explains this, and shows how to get \textbf{reproducible} and \textbf{risk-free}
+    parallelism, whilst using work splitting to \textbf{explicitly increase diversity}
+    where heuristics are weakest.
 }
 
 \end{columns}
 
-\block{Research Area: Practical Techniques for Solving Hard Problems in Parallel}{
-\begin{wrapfigure}[15]{r}{0.38\linewidth}
-    \begin{center}\begin{tikzpicture}
-        \input{gen-graph-speedup}
-    \end{tikzpicture}\end{center}
-\end{wrapfigure}
+\block{When are Theoretically Hard Subgraph Problems Actually Hard in Practice?}{
+\begin{wrapfigure}[20]{r}{0.68\linewidth}\begin{center}
+    \small\input{gen-graph-really-hard}
+\end{center}\end{wrapfigure}
 
-    Even with strong inference and intelligent backjumping, solving these hard graph problems can
-    take longer than we would like.  Modern processors have at least two cores, and machines with
-    dozens of cores are easily available. We might hope that we could use these extra cores to make
-    our programs \textbf{run faster}, or at least to \textbf{solve larger or harder problems} in the
-    time we have.
+    Modern algorithms can quickly solve nearly every subgraph isomorphism problem instance from
+    standard benchmark suites involving patterns with up to \textbf{a thousand vertices}, and
+    targets with up to \textbf{ten thousand vertices}. From this, an optimist might conclude that
+    subgraph isomorphism is easy in practice.
 
     \medskip
 
-    Typically, we do this by splitting problems up into evenly sized, independent pieces of work,
-    which may be evaluated in parallel. However, combinatorial optimisation problems tend to be
-    highly irregular (cannot be split into evenly sized pieces) and require \textbf{speculative
-    parallelism} (the pieces have dependencies upon each other, and we must guess what the answer
-    might be allow parallel evaluation).
+    We show how to generate instances with patterns with between ten and thirty vertices, and
+    targets with one hundred and fifty vertices, that cannot be solved within an hour.
 
     \medskip
 
-    Despite this, our results are favourable: we have demonstrated substantial speedups over
-    state-of-the-art algorithms for the maximum clique and subgraph isomorphism problems. Our
-    approach uses parallelism to explicitly \textbf{introduce diversity} into a search process to
-    offset the weakest choices made by heuristics, so our parallel workers are reducing our
-    commitment to potentially costly early mistakes. This is combined with late rebalancing, to give
-    good work balance with low overheads and good scalability. Finally, we show how to refactor
-    backjumping to be a ``fold with left-zero elements'', to allow parallel search without risking
-    an absolute slowdown.
+    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
+    region. Constrainedness.
 
     \medskip
 
-    In the future we will look at graph colouring, and extend our work to clusters of multi-core
-    computers.
+    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
+    region. Constrainedness. \[ \mathsf{\langle Sol \rangle = t^{\underline{p}} \cdot {d_t}^{d_p \cdot
+    \binom{p}{2}} \cdot
+    {(1 - d_{t})}^{(1 - d_{p}) \cdot \binom{p}{2}}} \] things.
+
+    \medskip
+
+    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
+    region. Constrainedness.
+
+    \medskip
+
+    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
+    region. Constrainedness.
 }
-
-\def\bysame{\leavevmode\hbox to3em{\hrulefill}\thinspace}
 
 \block{References}{
     \small
-    Ciaran McCreesh, Patrick Prosser: A Parallel, Backjumping Subgraph Isomorphism Algorithm using
-    Supplemental Graphs. Submitted to CP 2015. \\
-    \bysame: The Shape of the Search Tree for the Maximum Clique Problem,
+    Ciaran McCreesh, Samba Ndojh Ndiaye, Patrick Prosser and Christine Solnon: Clique and Constraint
+    Models for Maximum Common (Connected) Subgraph Problems. Submitted to CP 2016. \\
+    Ciaran McCreesh, Patrick Prosser and James Trimble: Heuristics and Really Hard Instances for
+    Subgraph Isomorphism Problems. To appear at IJCAI 2016. \\
+    Ciaran McCreesh and Patrick Prosser: A Parallel, Backjumping Subgraph Isomorphism Algorithm using
+    Supplemental Graphs. CP 2015. \\
+    Ciaran McCreesh and Patrick Prosser: The Shape of the Search Tree for the Maximum Clique Problem,
     and the Implications for Parallel Branch and Bound. ACM Transactions on Parallel Computing
-    Volume 2 Issue 1 (2015). \\
-    \bysame: A Parallel Branch and Bound Algorithm for the Maximum Labelled
-    Clique Problem. Optimization Letters (2014). \\
-    \bysame: Multi-Threading a State-of-the-Art Maximum Clique Algorithm.
-    Algorithms 6(4): 618-635 (2013).
+    Volume 2 Issue 1 (2015).
 }
 
 {
     \colorlet{blockbodybgcolor}{uofgsandstone!80!white}
     \colorlet{blocktitlebgcolor}{uofgsandstone!80!white}
     \block[bodyverticalshift=-0.5cm]{}{
-        Second year PhD student, supervised by Patrick
+        Third year PhD student, supervised by Patrick
         Prosser and David Manlove. SICSA research theme: modelling and abstraction. This work was
         supported by the Engineering and Physical Sciences Research Council [grant number
         EP/K503058/1]. \hfill \texttt{c.mccreesh.1@research.gla.ac.uk}
