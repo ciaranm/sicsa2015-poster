@@ -26,7 +26,7 @@ set yrange [0:]
 
 set title "MANN\\_a45"
 plot \
-    "graph-togian-MANN_a45-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Random", \
+    "graph-togian-MANN_a45-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-MANN_a45-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
     "graph-togian-MANN_a45-speedup-nodonation-depth2.data" u 1:2 with l lc '#951272' lt 1 lw 5 ti 'Depth 2', \
     "graph-togian-MANN_a45-speedup-nodonation-depth3.data" u 1:2 with l lc '#84bd00' lt 1 lw 5 ti "Depth 3", \
@@ -44,7 +44,7 @@ set xrange [0:64]
 set yrange [0:]
 
 plot \
-    "graph-togian-brock400_1-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Random", \
+    "graph-togian-brock400_1-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-brock400_1-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
     "graph-togian-brock400_1-speedup-nodonation-depth2.data" u 1:2 with l lc '#951272' lt 1 lw 5 ti 'Depth 2', \
     "graph-togian-brock400_1-speedup-nodonation-depth3.data" u 1:2 with l lc '#84bd00' lt 1 lw 5 ti "Depth 3", \
@@ -59,7 +59,7 @@ set yrange [0:]
 
 set title "gen400\\_p0.9\\_75"
 plot \
-    "graph-togian-gen400_p0.9_75-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Random", \
+    "graph-togian-gen400_p0.9_75-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-gen400_p0.9_75-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
     "graph-togian-gen400_p0.9_75-speedup-nodonation-depth2.data" u 1:2 with l lc '#951272' lt 1 lw 5 ti 'Depth 2', \
     "graph-togian-gen400_p0.9_75-speedup-nodonation-depth3.data" u 1:2 with l lc '#84bd00' lt 1 lw 5 ti "Depth 3", \
@@ -74,7 +74,7 @@ set yrange [0:]
 
 set title "brock400\\_3"
 plot \
-    "graph-togian-brock400_3-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Random", \
+    "graph-togian-brock400_3-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-brock400_3-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
     "graph-togian-brock400_3-speedup-nodonation-depth2.data" u 1:2 with l lc '#951272' lt 1 lw 5 ti 'Depth 2', \
     "graph-togian-brock400_3-speedup-nodonation-depth3.data" u 1:2 with l lc '#84bd00' lt 1 lw 5 ti "Depth 3", \

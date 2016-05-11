@@ -104,12 +104,12 @@
         \centering\begin{minipage}{0.94\textwidth}
             \textbf{Graphs} allow us to model complex and dynamic relationships, and can be used to
             represent industrial \textbf{optimisation} and \textbf{scheduling} problems. Many
-            interesting graph properties are \NP-hard (adding just one additional vertex doubles
-            the difficulty), but practical algorithms can avoid hitting an exponential worst-case
-            for many interesting inputs. Our research investigates how we can \textbf{exploit
-            the parallelism} present in today's multi-core processors to speed up solving hard graph
-            problems, or to allow us to tackle larger or more complicated
-            problems in the time we have.
+            interesting subgraph properties are \NP-hard (very informally, adding just one extra
+            vertex doubles the difficulty), but practical algorithms can avoid hitting the
+            exponential worst-case for many interesting inputs. Our research investigates how we can
+            \textbf{exploit the parallelism} present in multi-core processors to speed up solving
+            hard subgraph problems, or to allow us to tackle larger or more complicated problems in
+            the time we have.
         \end{minipage}
     }
 }
@@ -122,35 +122,36 @@
     \vspace*{0.5cm}
     \begin{center}\begin{tikzpicture}[scale=1.75]%{{{
         \newcount \c
-        \foreach \n in {1, ..., 8}{
-            \c=\n \advance\c by -1 \multiply\c by -360 \divide\c by 8 \advance\c by 112.5
-            \ifthenelse{\n = 1 \OR \n = 3 \OR \n = 6 \OR \n = 7}{
-                \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at
-                (\the\c:2.2) {\vphantom{0}};
+        \foreach \n in {1, ..., 9}{
+            \c=\n \advance\c by -1 \multiply\c by -360 \divide\c by 9 \advance\c by 290.0
+            \ifthenelse{\n = 3 \OR \n = 6 \OR \n = 9}{
+                \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\vphantom{0}};
             }{
-                \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2)
-                {\vphantom{0}};
+                \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N\n) at (\the\c:2.2) {\vphantom{0}};
             }
         }
+        \node[draw, circle, fill=uofgcobalt, inner sep=5pt, font=\bfseries] (N10) at (0, 0) {\vphantom{0}};
 
         \draw [ledge] (N1) -- (N2);
-        \draw [ledge] (N1) -- (N5);
         \draw [ledge] (N2) -- (N3);
-        \draw [ledge] (N2) -- (N8);
         \draw [ledge] (N3) -- (N4);
-        \draw [ledge] (N3) -- (N5);
-        \draw [ledge] (N3) -- (N8);
         \draw [ledge] (N4) -- (N5);
-        \draw [ledge] (N4) -- (N6);
-        \draw [ledge] (N5) -- (N8);
+        \draw [ledge] (N5) -- (N6);
+        \draw [ledge] (N6) -- (N7);
         \draw [ledge] (N7) -- (N8);
+        \draw [ledge] (N8) -- (N9);
+        \draw [ledge] (N9) -- (N1);
 
-        \draw [edge] (N1) -- (N3);
-        \draw [edge] (N1) -- (N6);
-        \draw [edge] (N1) -- (N7);
-        \draw [edge] (N3) -- (N6);
-        \draw [edge] (N3) -- (N7);
-        \draw [edge] (N6) -- (N7);
+        \draw [ledge] (N4) to [out=10, in=170] (N8);
+        \draw [ledge] (N2) to [out=50, in=250] (N7);
+        \draw [ledge] (N5) to [out=290, in=130] (N1);
+
+        \draw [edge] (N3) -- (N10);
+        \draw [edge] (N6) -- (N10);
+        \draw [edge] (N9) -- (N10);
+        \draw [edge] (N6) -- (N3);
+        \draw [edge] (N9) -- (N3);
+        \draw [edge] (N6) -- (N9);
     \end{tikzpicture}\end{center}
 \end{wrapfigure}
 
@@ -166,13 +167,13 @@
 \begin{wrapfigure}[11]{r}{0.4\linewidth}
     \vspace*{0.5cm}
     \begin{center}\begin{tikzpicture}[scale=1.1]%{{{
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Na) at (1,  0)
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (Na) at (1,  0)
         {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nb) at (1, -2)
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (Nb) at (1, -2)
         {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nc) at (0, -4)
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (Nc) at (0, -4)
         {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (Nd) at (2, -4)
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (Nd) at (2, -4)
         {\vphantom{0}};
 
         \draw [edge] (Na) -- (Nb);
@@ -180,12 +181,12 @@
         \draw [edge] (Nc) -- (Nd);
         \draw [edge] (Nb) -- (Nd);
 
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N1) at (7.5,  0) {\vphantom{0}};
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (N1) at (7.5,  0) {\vphantom{0}};
         \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N2) at (9.5,  0) {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N3) at (7.5, -2) {\vphantom{0}};
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (N3) at (7.5, -2) {\vphantom{0}};
         \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N4) at (9.5, -2) {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N5) at (7.5, -4) {\vphantom{0}};
-        \node[draw, circle, fill=uofgpumpkin, inner sep=5pt, font=\bfseries] (N6) at (9.5, -4) {\vphantom{0}};
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (N5) at (7.5, -4) {\vphantom{0}};
+        \node[draw, circle, fill=uofgrose, inner sep=5pt, font=\bfseries] (N6) at (9.5, -4) {\vphantom{0}};
         \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N7) at (5.5,  0) {\vphantom{0}};
         \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N8) at (5.5, -2) {\vphantom{0}};
         \node[draw, circle, fill=white, inner sep=5pt, font=\bfseries] (N9) at (5.5, -4) {\vphantom{0}};
@@ -367,7 +368,7 @@
             }
         }
 
-        \tikzstyle{p} = [draw, rounded corners, color=uofgrose, fill=uofgrose!50, line width=1pt];
+        \tikzstyle{p} = [draw, rounded corners, color=uofgrose, dashed, line width=3pt];
         \draw [p] ($(N11) + (-0.55, 0.51)$) -- ($(N12) + (0.55, 0.51)$) -- ($(N12) + (0.55, -1.5)$) -- ($(N11) + (-0.55, -1.5)$) -- cycle;
         \draw [p] ($(N13) + (-0.55, 0.51)$) -- ($(N21) + (0.55, 0.51)$) -- ($(N21) + (0.55, -1.5)$) -- ($(N13) + (-0.55, -1.5)$) -- cycle;
         \draw [p] ($(N22) + (-0.55, 0.51)$) -- ($(N23) + (0.68, 0.51)$) -- ($(N23) + (0.68, -1.5)$) -- ($(N22) + (-0.55, -1.5)$) -- cycle;
@@ -430,41 +431,37 @@
 \end{columns}
 
 \block{When are Theoretically Hard Subgraph Problems Actually Hard in Practice?}{
-\begin{wrapfigure}[20]{r}{0.68\linewidth}\begin{center}
+\begin{wrapfigure}[21]{r}{0.62\linewidth}\begin{center}
     \small\input{gen-graph-really-hard}
 \end{center}\end{wrapfigure}
 
-    Modern algorithms can quickly solve nearly every subgraph isomorphism problem instance from
-    standard benchmark suites involving patterns with up to \textbf{a thousand vertices}, and
-    targets with up to \textbf{ten thousand vertices}. From this, an optimist might conclude that
-    subgraph isomorphism is easy in practice.
+    Modern algorithms can solve nearly every subgraph isomorphism problem instance from standard
+    benchmark suites, which contain patterns with up to a thousand vertices and targets with up to
+    \textbf{ten thousand vertices}, within a few hours; many take only a few seconds.  From this, an
+    optimist might conclude that subgraph isomorphism is always easy in practice.
 
     \medskip
 
-    We show how to generate instances with patterns with between ten and thirty vertices, and
-    targets with one hundred and fifty vertices, that cannot be solved within an hour.
+    By looking at independently random pattern and target graphs, we show how to generate instances
+    with patterns with thirty vertices, and targets with one hundred and fifty vertices, that cannot
+    be solved within an hour.
 
     \medskip
 
-    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
-    region. Constrainedness.
+    The first row of charts on the right show a sharp \textbf{phase transition} between satisfiable
+    and unsatisfiable instances, as the pattern and target densities are varied. The black line
+    shows that we can predict the phase transition location reasonably accurately, except for very
+    sparse or dense patterns. The second row shows the mean search cost.
 
     \medskip
 
-    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
-    region. Constrainedness. \[ \mathsf{\langle Sol \rangle = t^{\underline{p}} \cdot {d_t}^{d_p \cdot
-    \binom{p}{2}} \cdot
-    {(1 - d_{t})}^{(1 - d_{p}) \cdot \binom{p}{2}}} \] things.
-
-    \medskip
-
-    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
-    region. Constrainedness.
-
-    \medskip
-
-    Phase transition in random graphs, which we can locate reasonably accurately. Difficult central
-    region. Constrainedness.
+    Usually, proximity to a phase transition predicts where the really hard instances
+    are. However, for larger pattern graphs, the central part of the parameter space is not near a
+    phase transition but is still hard. Further experiments show that these hard instances are
+    \textbf{algorithm independent}, and \textbf{remain hard} under reductions to clique, boolean
+    satisfiability, and mixed integer models. The theory of \textbf{constrainedness} predicts this
+    behaviour: the final row shows that the central region is only slightly overconstrained,
+    despite not being near a phase transition.
 }
 
 \block{References}{
