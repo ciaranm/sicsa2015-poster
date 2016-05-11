@@ -1,3 +1,3 @@
-SICSA PhD Conference 2015 Poster
+SICSA PhD Conference 2016 Poster
 ================================
 
