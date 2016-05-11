@@ -24,7 +24,7 @@ set grid ytics back lc '#BAB5B1'
 set xrange [0:64]
 set yrange [0:]
 
-set title "MANN\\_a45"
+set title "MANN\\_a45 (438s)"
 plot \
     "graph-togian-MANN_a45-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-MANN_a45-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
@@ -34,7 +34,7 @@ plot \
 
 set key off
 
-set title "brock400\\_1"
+set title "brock400\\_1 (371s)"
 
 set xtics (2, 16, 32, 48, 64) nomirror border rangelimited out
 set ytics nomirror border scale 0
@@ -50,14 +50,14 @@ plot \
     "graph-togian-brock400_1-speedup-nodonation-depth3.data" u 1:2 with l lc '#84bd00' lt 1 lw 5 ti "Depth 3", \
     "graph-togian-brock400_1-speedup-d3.data" u 1:2 with l lc '#ffb948' lt 2 lw 5 ti "Resplitting"
 
-set xtics (2, 16, 32, 48, 64) nomirror border rangelimited out
+set xtics (16, 32, 48, 64) nomirror border rangelimited out
 set ytics nomirror border scale 0
 set grid ytics back lc '#BAB5B1'
 
 set xrange [0:64]
 set yrange [0:]
 
-set title "gen400\\_p0.9\\_75"
+set title "gen400\\_p0.9\\_75 (3.68 days)"
 plot \
     "graph-togian-gen400_p0.9_75-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-gen400_p0.9_75-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
@@ -72,7 +72,7 @@ set grid ytics back lc '#BAB5B1'
 set xrange [0:64]
 set yrange [0:]
 
-set title "brock400\\_3"
+set title "brock400\\_3 (213s)"
 plot \
     "graph-togian-brock400_3-speedup-cilk.data" u 1:2 with l lc '#5b4d94' lt 2 lw 5 ti "Cilk", \
     "graph-togian-brock400_3-speedup-nodonation.data" u 1:2 with l lc '#009dec' lt 1 lw 5 ti "Depth 1", \
