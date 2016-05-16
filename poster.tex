@@ -102,14 +102,14 @@
     \colorlet{blocktitlebgcolor}{uofgcobalt}
     \block[bodyverticalshift=0cm, bodyinnersep=3mm]{}{
         \centering\begin{minipage}{0.94\textwidth}
-            \textbf{Graphs} allow us to model complex and dynamic relationships, and can be used to
-            represent industrial \textbf{optimisation} and \textbf{scheduling} problems. Many
-            interesting subgraph properties are \NP-hard (very informally, adding just one extra
+            \textbf{Graphs} allow us to model complex and dynamic relationships, and by
+            \textbf{finding subgraphs} we can identify interesting properties and structures. In
+            general, subgraph problems are \NP-hard (very informally, adding just one extra
             vertex doubles the difficulty), but practical algorithms can avoid hitting the
-            exponential worst-case for many interesting inputs. Our research investigates how we can
-            \textbf{exploit the parallelism} present in multi-core processors to speed up solving
-            hard subgraph problems, or to allow us to tackle larger or more complicated problems in
-            the time we have.
+            exponential worst-case for many real-world inputs. We investigate how we can
+            \textbf{exploit the parallelism} present in multi-core processors to \textbf{speed up} solving
+            hard subgraph problems, or to allow us to tackle \textbf{larger or more complicated
+            problems} in the time we have.
         \end{minipage}
     }
 }
@@ -375,9 +375,9 @@
         \draw [p] ($(N31) + (-0.68, 0.51)$) -- ($(N33) + (0.55, 0.51)$) -- ($(N33) + (0.55, -1.5)$) -- ($(N31) + (-0.68, -1.5)$) -- cycle;
 
         \foreach \na in {1, ..., 3}{
-            \draw [edge] (N) -- (N\na);
+            \draw [ledge] (N) -- (N\na);
             \foreach \nb in {1, ..., 3}{
-                \draw [edge] (N\na) -- (N\na\nb);
+                \draw [ledge] (N\na) -- (N\na\nb);
             }
         }
 
@@ -412,9 +412,10 @@
 
     These search trees are said to be \textbf{irregular}, because their sizes vary in unpredictable
     ways. One way to get around this is by creating many \textbf{more subproblems than processors}.
-    In practice, different work splitting methods give vastly different performance:
+    In practice, different work splitting methods give vastly different performance, from almost
+    no improvement at all to strongly super-linear, and scalability is often not the main concern:
 
-    \vspace{0.7cm}
+    \vspace{0.6cm}
 
     \begin{center}
         \small
@@ -435,14 +436,14 @@
     \small\input{gen-graph-really-hard}
 \end{center}\end{wrapfigure}
 
-    Modern algorithms can solve nearly every subgraph isomorphism problem instance from standard
-    benchmark suites, which contain patterns with up to a thousand vertices and targets with up to
-    \textbf{ten thousand vertices}, within a few hours; many take only a few seconds.  From this, an
+    Modern algorithms can solve nearly every subgraph isomorphism instance from standard benchmark
+    suites, which contain patterns with up to a thousand vertices and targets with up to \textbf{ten
+    thousand vertices}, within a few hours; many take only \textbf{a few seconds}.  From this, an
     optimist might conclude that subgraph isomorphism is always easy in practice.
 
     \medskip
 
-    By looking at independently random pattern and target graphs, we show how to generate instances
+    By looking at independently-random pattern and target graphs, we show how to generate instances
     with patterns with thirty vertices, and targets with one hundred and fifty vertices, that cannot
     be solved within an hour.
 
@@ -458,7 +459,7 @@
     Usually, proximity to a phase transition predicts where the really hard instances
     are. However, for larger pattern graphs, the central part of the parameter space is not near a
     phase transition but is still hard. Further experiments show that these hard instances are
-    \textbf{algorithm independent}, and \textbf{remain hard} under reductions to clique, boolean
+    \textbf{algorithm independent}, and \textbf{remain hard under reductions} to clique, boolean
     satisfiability, and mixed integer models. The theory of \textbf{constrainedness} predicts this
     behaviour: the final row shows that the central region is only slightly overconstrained,
     despite not being near a phase transition.
