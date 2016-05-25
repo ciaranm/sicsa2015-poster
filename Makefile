@@ -9,7 +9,7 @@ tables : $(TABLES)
 
 graphs : $(GRAPHS)
 
-gen-graph-%.tex : graph-%.gnuplot
+gen-graph-%.tex : plots/graph-%.gnuplot
 	gnuplot $<
 	sed -i -e '4,5s/^\(\\path.*\)/\% \1/' $@ # epic haxx
 
